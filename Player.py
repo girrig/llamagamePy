@@ -11,7 +11,7 @@ import Animation
 
 
 animations = {}
-sounds = ''
+sounds = {}
 
 class Player:
     def __init__(self, pos):
@@ -20,13 +20,17 @@ class Player:
         self.y = self.pos[1]
         self.anim_frame = 0
         
-        # dead = 0, awake = 1, asleep = 2
-        self.state = 1
         self.energy = 100
         self.food = 100
         self.direction = 0  # 0 is north
         self.speed = 2
-
+        
+        # dead = 0, awake = 1, asleep = 2
+        self.state = 1
+        self.direction = 'down'
+        self.moveUp = self.moveDown = self.moveLeft = self.moveRight = False
+        
+        
     def getAnimation(self, action):
         global animations
         try:
@@ -45,29 +49,35 @@ class Player:
         else:
             self.anim_frame = 0
     
-    def moveto(self, food):
-        try:
-            angle = atan((food.y - self.y) / (food.x - self.x))
-            self.direction = angle
-        except:  # only happens if the objects line up pixel perfect
-            self.direction = 0
-        #Quadrant 1
-        if(self.x < food.x and self.y < food.y):
-                self.x += (self.speed * cos(angle))
-                self.y += (self.speed * sin(angle))
-                self.getAnimation("right_run.00" + str(self.anim_frame))
-        #Quadrant 2
-        if(self.x > food.x and self.y < food.y):
-                self.x -= (self.speed * cos(angle))
-                self.y -= (self.speed * sin(angle))
-                self.getAnimation("left_run.00" + str(self.anim_frame))
-        #Quadrant 3
-        if(self.x > food.x and self.y > food.y):
-                self.x -= (self.speed * cos(angle))
-                self.y -= (self.speed * sin(angle))
-                self.getAnimation("left_run.00" + str(self.anim_frame))
-        #Quadrant 4
-        if(self.x < food.x and self.y > food.y):
-                self.x += (self.speed * cos(angle))
-                self.y += (self.speed * sin(angle))
-                self.getAnimation("right_run.00" + str(self.anim_frame))
+    def update(self):
+        if self.moveUp:
+            self.y -= self.speed
+        if self.moveDown:
+            self.y += self.speed
+        if self.moveLeft:
+            self.x -= self.speed
+        if self.moveRight:
+            self.x += self.speed
+    
+    def paint(self, screen):
+        if self.moveUp or self.moveDown or self.moveLeft or self.moveRight:  # moving
+            # draw the correct walking/running sprite from the animation object
+            if self.direction == 'up':
+                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif self.direction == 'down':
+                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif self.direction == 'left':
+                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif self.direction == 'right':
+                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            self.update_anim()
+        else:  # standing still
+            self.anim_frame = 0
+            if self.direction == 'up':
+                screen.blit(self.getAnimation('_back_stand'), (self.x, self.y))
+            elif self.direction == 'down':
+                screen.blit(self.getAnimation('_front_stand'), (self.x, self.y))
+            elif self.direction == "left":
+                screen.blit(self.getAnimation('_left_stand'), (self.x, self.y))
+            elif self.direction == "right":
+                screen.blit(self.getAnimation('_right_stand'), (self.x, self.y))

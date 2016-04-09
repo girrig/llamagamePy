@@ -20,18 +20,15 @@ class World():
         self.height = height
         self.fpsClock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption('Llama Simulator 3000: Alpha v0.006')
-
+        pygame.display.set_caption('Llama Simulator 3000: Alpha v0.007')
+        
+        # color for background
         self.lightgreen = pygame.Color(130, 255, 130)
-        self.red = pygame.Color(255, 0, 0)
-        self.green = pygame.Color(0, 255, 0)
-        self.blue = pygame.Color(0, 0, 255)
-        self.white = pygame.Color(255, 255, 255)
-        self.black = pygame.Color(0, 0, 0)
 
-        #mouse
+        # mouse
         self.mouseX, self.mouseY = 0, 0
 
+        # font for text display
         self.font = pygame.font.Font('freesansbold.ttf', 18)
 
         # lists of all things on the screen
@@ -41,13 +38,11 @@ class World():
 
         # Player
         self.player = Player((self.width/2, self.height/2))
-        self.direction = 'down'
-        self.moveUp = self.moveDown = self.moveLeft = self.moveRight = False
 
         # Loop
         self.done = False
-
-
+    
+    
     #### MAIN LOOP FUCTIONS ####
     def handleEvents(self):
         for event in pygame.event.get():
@@ -63,26 +58,26 @@ class World():
                     pygame.quit()
                     exit()
                 if event.key == K_UP:
-                    self.moveUp = True
-                    self.moveDown = False
-                    if not self.moveLeft and not self.moveRight:
+                    self.player.moveUp = True
+                    self.player.moveDown = False
+                    if not self.player.moveLeft and not self.player.moveRight:
                         # only change the direction to up if the player wasn't moving left/right
-                        self.direction = 'up'
+                        self.player.direction = 'up'
                 elif event.key == K_DOWN:
-                    self.moveDown = True
-                    self.moveUp = False
-                    if not self.moveLeft and not self.moveRight:
-                        self.direction = 'down'
+                    self.player.moveDown = True
+                    self.player.moveUp = False
+                    if not self.player.moveLeft and not self.player.moveRight:
+                        self.player.direction = 'down'
                 elif event.key == K_LEFT:
-                    self.moveLeft = True
-                    self.moveRight = False
-                    if not self.moveUp and not self.moveDown:
-                        self.direction = 'left'
+                    self.player.moveLeft = True
+                    self.player.moveRight = False
+                    if not self.player.moveUp and not self.player.moveDown:
+                        self.player.direction = 'left'
                 elif event.key == K_RIGHT:
-                    self.moveRight = True
-                    self.moveLeft = False
-                    if not self.moveUp and not self.moveDown:
-                        self.direction = 'right'
+                    self.player.moveRight = True
+                    self.player.moveLeft = False
+                    if not self.player.moveUp and not self.player.moveDown:
+                        self.player.direction = 'right'
                 elif event.key == K_c:  # clears everything
                     del self.fruitlist[:]
                     del self.llamalist[:]
@@ -97,30 +92,30 @@ class World():
                     self.tigerlist.append(Tiger((self.mouseX, self. mouseY)))
             elif event.type == KEYUP:
                 if event.key == K_UP:
-                    self.moveUp = False
+                    self.player.moveUp = False
                     # if the player was moving in a sideways direction before, change the self.direction the player is facing.
-                    if self.moveLeft:
-                        self.direction = 'left'
-                    if self.moveRight:
-                        self.direction = 'right'
+                    if self.player.moveLeft:
+                        self.player.direction = 'left'
+                    if self.player.moveRight:
+                        self.player.direction = 'right'
                 elif event.key == K_DOWN:
-                    self.moveDown = False
-                    if self.moveLeft:
-                        self.direction = 'left'
-                    if self.moveRight:
-                        self.direction = 'right'
+                    self.player.moveDown = False
+                    if self.player.moveLeft:
+                        self.player.direction = 'left'
+                    if self.player.moveRight:
+                        self.player.direction = 'right'
                 elif event.key == K_LEFT:
-                    self.moveLeft = False
-                    if self.moveUp:
-                        self.direction = 'up'
-                    if self.moveDown:
-                        self.direction = 'down'
+                    self.player.moveLeft = False
+                    if self.player.moveUp:
+                        self.player.direction = 'up'
+                    if self.player.moveDown:
+                        self.player.direction = 'down'
                 elif event.key == K_RIGHT:
-                    self.moveRight = False
-                    if self.moveUp:
-                        self.direction = 'up'
-                    if self.moveDown:
-                        self.direction = 'down'
+                    self.player.moveRight = False
+                    if self.player.moveUp:
+                        self.player.direction = 'up'
+                    if self.player.moveDown:
+                        self.player.direction = 'down'
 
     def update(self):
         self.updateMap()
@@ -147,41 +142,13 @@ class World():
             each.update(self.llamalist)
 
     def updatePlayer(self):
-        # actually move the position of the player
-        if self.moveUp:
-            self.player.y -= self.player.speed
-        if self.moveDown:
-            self.player.y += self.player.speed
-        if self.moveLeft:
-            self.player.x -= self.player.speed
-        if self.moveRight:
-            self.player.x += self.player.speed
+        self.player.update()
 
     def drawMap(self):
         self.screen.fill(self.lightgreen)
 
     def drawPlayer(self):
-        if self.moveUp or self.moveDown or self.moveLeft or self.moveRight:  # moving
-            # draw the correct walking/running sprite from the animation object
-            if self.direction == 'up':
-                self.screen.blit(self.player.getAnimation('back_walk.00' + str(self.player.anim_frame)), (self.player.x, self.player.y))
-            elif self.direction == 'down':
-                self.screen.blit(self.player.getAnimation('front_walk.00' + str(self.player.anim_frame)), (self.player.x, self.player.y))
-            elif self.direction == 'left':
-                self.screen.blit(self.player.getAnimation('left_walk.00' + str(self.player.anim_frame)), (self.player.x, self.player.y))
-            elif self.direction == 'right':
-                self.screen.blit(self.player.getAnimation('right_walk.00' + str(self.player.anim_frame)), (self.player.x, self.player.y))
-            self.player.update_anim()
-        else:  # standing still
-            self.player.anim_frame = 0
-            if self.direction == 'up':
-                self.screen.blit(self.player.getAnimation('_back_stand'), (self.player.x, self.player.y))
-            elif self.direction == 'down':
-                self.screen.blit(self.player.getAnimation('_front_stand'), (self.player.x, self.player.y))
-            elif self.direction == "left":
-                self.screen.blit(self.player.getAnimation('_left_stand'), (self.player.x, self.player.y))
-            elif self.direction == "right":
-                self.screen.blit(self.player.getAnimation('_right_stand'), (self.player.x, self.player.y))
+        self.player.paint(self.screen)
 
     def drawLists(self):
         # Fruit

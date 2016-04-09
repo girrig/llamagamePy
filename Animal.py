@@ -22,13 +22,14 @@ class Animal:
         self.y = self.pos[1]
         self.anim_frame = 0
         
-        # dead = 0, awake = 1, asleep = 2
-        self.state = 1
-        self.moving = False
         self.energy = 100
         self.food = 60
         self.direction = 0  # 0 is north
         self.speed = 4
+        
+        # dead = 0, awake = 1, asleep = 2
+        self.state = 1
+        self.moving = False
     
     
     def getAnimation(self, action):
