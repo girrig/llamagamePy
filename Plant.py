@@ -5,6 +5,13 @@ Created on Sep 14, 2013
 '''
 
 from random import randint
+import Animation_old
+
+
+images = {}
+animations = {}
+sounds = ''
+images, animations = Animation_old.loadAnimations("plant")
 
 class Plant:
     quantity = 1

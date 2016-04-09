@@ -7,65 +7,77 @@ Created on Mar 12, 2013
 import pygame
 import time
 from math import *
-from Food import *
+import Food
+import Animation
+
+
+animations = {}
+sounds = {}
 
 class Animal:
-    image = None
-    imageRect = None
-    sound = ''
-    #dead = 0, awake = 1, asleep = 2
-    state = 1
-    energy = 100
-    food = 50
-    direction = 0  #0 is north
-    speed = 4
-    quantity = 20  #how much food it's worth
+    quantity = 20  # how much food it's worth
     def __init__(self, pos):
         self.pos = pos
         self.x = self.pos[0]
         self.y = self.pos[1]
-
-    def getRect(self):
-        return self.imageRect
+        self.anim_frame = 0
+        
+        # dead = 0, awake = 1, asleep = 2
+        self.state = 1
+        self.moving = False
+        self.energy = 100
+        self.food = 60
+        self.direction = 0  # 0 is north
+        self.speed = 4
     
-    def getImage(self):
-        return self.image
+    
+    def getAnimation(self, action):
+        global animations
+        try:
+            return animations[action]
+        except:
+            animations = Animation.loadAnimations("animal")
+            return animations[action]
+
+    def getAnimationList(self):
+        global animations
+        return animations
+    
+    def update_anim(self):
+        if self.anim_frame < 5:
+            self.anim_frame += 1
+        else:
+            self.anim_frame = 0
         
     def moveto(self, food):
+        self.moving = True
         try:
-            #atan = arctan
             angle = atan((food.y - self.y) / (food.x - self.x))
             self.direction = angle
-        except: # only happens if the objects line up pixel perfect
+        except:  # only happens if the objects line up pixel perfect
             self.direction = 0
         #Quadrant 1
         if(self.x < food.x and self.y < food.y):
                 self.x += (self.speed * cos(angle))
                 self.y += (self.speed * sin(angle))
-                self.image = pygame.image.load('48llamaR.png')
         #Quadrant 2
         if(self.x > food.x and self.y < food.y):
                 self.x -= (self.speed * cos(angle))
                 self.y -= (self.speed * sin(angle))
-                self.image = pygame.image.load('48llamaL.png')
         #Quadrant 3
         if(self.x > food.x and self.y > food.y):
                 self.x -= (self.speed * cos(angle))
                 self.y -= (self.speed * sin(angle))
-                self.image = pygame.image.load('48llamaL.png')
         #Quadrant 4
         if(self.x < food.x and self.y > food.y):
                 self.x += (self.speed * cos(angle))
                 self.y += (self.speed * sin(angle))
-                self.image = pygame.image.load('48llamaR.png')
 
-        
-        
     def findFood(self, foodlist):
-        #initial setup
+        # initial setup
         shortestDistance = self.getdistance(foodlist[0])
         closestFood = foodlist[0]
-        #finding closest food
+        # finding closest food
         for each in foodlist:
             if(self.getdistance(each) < shortestDistance):
                 shortestDistance = self.getdistance(each)
@@ -79,16 +91,18 @@ class Animal:
 
 
 class Llama(Animal):
+    animations = {}
+    sounds = {}
+    animations = Animation.loadAnimations("llama")
+    quanity = 10
     def __init__(self, pos):
-        self.pos = pos
-        self.x = self.pos[0]
-        self.y = self.pos[1]
-        self.image = pygame.image.load('48llamaidleL.png')
-        self.sound = 'llamasound.wav'
-        self.left = True
+        Animal.__init__(self, pos)
         
-    def frame(self, fruitlist):
-        #self.pos = self.pos.move(random.randint(-10,10), random.randint(-10,10))
+    
+    def update(self, fruitlist):
+        # they are not moving unless a condition sets them to moving
+        self.moving = False
+        
         if self.food <= 0:
             self.state = 0
         if self.energy < 0:
@@ -97,17 +111,12 @@ class Llama(Animal):
         if self.state == 1:
             self.energy = self.energy - .005
             self.food = self.food - .05
-            if self.left == True:
-                self.image = pygame.image.load('48llamaidleL.png')
-            if self.left != True:
-                self.image = pygame.image.load('48llamaidleR.png')
                 
             if self.food < 50:
                 try:
                     desiredfood = self.findFood(fruitlist)
                     self.moveto(desiredfood)
                     if(self.getdistance(desiredfood) < 10):
-                        (pygame.mixer.Sound(self.sound)).play()
                         self.food += desiredfood.quantity
                         fruitlist.remove(desiredfood)
                 except IndexError:
@@ -120,21 +129,53 @@ class Llama(Animal):
                 self.state = 1
                 
         elif self.state == 0:
-            self.image = pygame.image.load("48llamadeadL.png")
+            pass
+    
+    def paint(self, screen):
+        if self.moving:
+            # draw the correct walking/running sprite from the animation object
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            self.update_anim()
+        else:  # standing still
+            self.anim_frame = 0
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('_back_stand'), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('_front_stand'), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('_left_stand'), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('_right_stand'), (self.x, self.y))
+        if self.state == 0:
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('_back_dead'), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('_front_dead'), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('_left_dead'), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('_right_dead'), (self.x, self.y))
         
         
         
 class Tiger(Animal):
+    animations = {}
+    sounds = {}
     def __init__(self, pos):
-        self.pos = pos
-        self.x = self.pos[0]
-        self.y = self.pos[1]
-        self.currentImage = pygame.image.load('48tigeridleL.png')
-        self.sound = 'tigersound.mp3'
+        Animal.__init__(self,pos)
 
         
-    def frame(self, meatlist):
-        #self.pos = self.pos.move(random.randint(-10,10), random.randint(-10,10))
+    def update(self, meatlist):
+        # they are not moving unless a condition sets them to moving
+        self.moving = False
+        
         if self.food <= 0:
             self.state = 0
         if self.energy < 0:
@@ -143,17 +184,12 @@ class Tiger(Animal):
         if self.state == 1:
             self.energy = self.energy - .005
             self.food = self.food - .05
-            if  'L' in self.image:
-                self.image = pygame.image.load('48tigeridleL.png')
-            if  'R' in self.image:
-                self.image = pygame.image.load('48tigeridleL.png')
                 
             if self.food < 50:
                 try:
                     desiredfood = self.findFood(meatlist)
                     self.moveto(desiredfood)
                     if(self.getdistance(desiredfood) < 10):
-                        (pygame.mixer.Sound(self.sound)).play()
                         self.food += desiredfood.quantity
                         meatlist.remove(desiredfood)
                 except IndexError:
@@ -166,4 +202,36 @@ class Tiger(Animal):
                 self.state = 1
                 
         elif self.state == 0:
-            self.image = pygame.image.load("48tigerdeadL.png")
+            pass
+            
+    def paint(self, screen):
+        if self.moving:
+            # draw the correct walking/running sprite from the animation object
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.x, self.y))
+            self.update_anim()
+        else:  # standing still
+            self.anim_frame = 0
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('_back_stand'), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('_front_stand'), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('_left_stand'), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('_right_stand'), (self.x, self.y))
+        if self.state == 0:
+            if ((self.direction > 315) or (self.direction < 45)):
+                screen.blit(self.getAnimation('_back_dead'), (self.x, self.y))
+            elif ((self.direction > 135) and (self.direction < 225)):
+                screen.blit(self.getAnimation('_front_dead'), (self.x, self.y))
+            elif ((self.direction >= 225) and (self.direction <= 315)):
+                screen.blit(self.getAnimation('_left_dead'), (self.x, self.y))
+            elif ((self.direction >= 45) and (self.direction <= 135)):
+                screen.blit(self.getAnimation('_right_dead'), (self.x, self.y))
