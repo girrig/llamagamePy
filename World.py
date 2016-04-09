@@ -28,7 +28,7 @@ class World():
         self.blue = pygame.Color(0, 0, 255)
         self.white = pygame.Color(255, 255, 255)
         self.black = pygame.Color(0, 0, 0)
-        
+
         #mouse
         self.mouseX, self.mouseY = 0, 0
 
@@ -38,16 +38,16 @@ class World():
         self.fruitlist = []
         self.llamalist = []
         self.tigerlist = []
-        
+
         # Player
         self.player = Player((self.width/2, self.height/2))
         self.direction = 'down'
         self.moveUp = self.moveDown = self.moveLeft = self.moveRight = False
-        
+
         # Loop
         self.done = False
 
-   
+
     #### MAIN LOOP FUCTIONS ####
     def handleEvents(self):
         for event in pygame.event.get():
@@ -84,21 +84,9 @@ class World():
                     if not self.moveUp and not self.moveDown:
                         self.direction = 'right'
                 elif event.key == K_c:  # clears everything
-                    i = 0
-                    length = len(self.fruitlist)
-                    while i < length:
-                        self.fruitlist.remove(self.fruitlist[i])
-                        i += 1
-                    i = 0
-                    length = len(self.llamalist)
-                    while i < length:
-                        self.llamalist.remove(self.llamalist[i])
-                        i += 1
-                    i = 0
-                    length = len(self.tigerlist)
-                    while i < length:
-                        self.tigerlist.remove(self.tigerlist[i])
-                        i += 1
+                    del self.fruitlist[:]
+                    del self.llamalist[:]
+                    del self.tigerlist[:]
                 elif event.key == K_l:
                     self.llamalist.append(Llama((self.mouseX, self.mouseY)))
                 elif event.key == K_p:
@@ -133,7 +121,7 @@ class World():
                         self.direction = 'up'
                     if self.moveDown:
                         self.direction = 'down'
-                        
+
     def update(self):
         self.updateMap()
         self.updateLists()
@@ -148,12 +136,12 @@ class World():
     #### SUB FUNCTIONS ####
     def updateMap(self):
         pass
-    
+
     def updateLists(self):
         # Llama
         for each in self.llamalist:
             each.update(self.fruitlist)
-            
+
         # Tiger
         for each in self.tigerlist:
             each.update(self.llamalist)
@@ -171,7 +159,7 @@ class World():
 
     def drawMap(self):
         self.screen.fill(self.lightgreen)
-        
+
     def drawPlayer(self):
         if self.moveUp or self.moveDown or self.moveLeft or self.moveRight:  # moving
             # draw the correct walking/running sprite from the animation object
@@ -200,11 +188,11 @@ class World():
         for each in self.fruitlist:
             # fruit is 24x24 so half is 12
             self.screen.blit(each.getImage(), (int(each.x - 12), int(each.y - 12)))
-        
+
         # Llama
         for each in self.llamalist:
             each.paint(self.screen)
-            
+
         # Tiger
         for each in self.tigerlist:
             each.paint(self.screen)
@@ -215,7 +203,7 @@ class World():
             self.handleEvents()
             self.update()
             self.draw()
-            
+
             # updates certain sections of the screen based on parameters (No parameters = full screen refresh)
             pygame.display.update()
             #print("frame: " + str(framecount))
