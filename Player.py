@@ -35,4 +35,4 @@ class Player:
         return self.name
     
     def setName(self, name):
-        self.name = name
+        self.name = name        
