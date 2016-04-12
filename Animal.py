@@ -7,7 +7,7 @@ Created on Mar 12, 2013
 import pygame
 import time
 from math import *
-import Food
+import Fruit
 import Animation
 
 
@@ -15,21 +15,20 @@ animations = {}
 sounds = {}
 
 class Animal:
-    quantity = 20  # how much food it's worth
     def __init__(self, pos):
-        self.pos = pos
-        self.x = self.pos[0]
-        self.y = self.pos[1]
+        self.pos_x = pos[0]
+        self.pos_y = pos[1]
         self.anim_frame = 0
         
         self.energy = 100
         self.food = 60
-        self.direction = 0  # 0 is north
-        self.speed = 4
+        self.quantity = 0
         
         # dead = 0, awake = 1, asleep = 2
         self.state = 1
         self.moving = False
+        self.direction = 0  # 0 is north
+        self.speed = 4
     
     
     def getAnimation(self, action):
@@ -53,26 +52,26 @@ class Animal:
     def moveto(self, food):
         self.moving = True
         try:
-            angle = atan((food.y - self.y) / (food.x - self.x))
+            angle = atan((food.pos_y - self.pos_y) / (food.pos_x - self.pos_x))
             self.direction = angle
         except:  # only happens if the objects line up pixel perfect
             self.direction = 0
         #Quadrant 1
-        if(self.x < food.x and self.y < food.y):
-                self.x += (self.speed * cos(angle))
-                self.y += (self.speed * sin(angle))
+        if(self.pos_x < food.pos_x and self.pos_y < food.pos_y):
+                self.pos_x += (self.speed * cos(angle))
+                self.pos_y += (self.speed * sin(angle))
         #Quadrant 2
-        if(self.x > food.x and self.y < food.y):
-                self.x -= (self.speed * cos(angle))
-                self.y -= (self.speed * sin(angle))
+        if(self.pos_x > food.pos_x and self.pos_y < food.pos_y):
+                self.pos_x -= (self.speed * cos(angle))
+                self.pos_y -= (self.speed * sin(angle))
         #Quadrant 3
-        if(self.x > food.x and self.y > food.y):
-                self.x -= (self.speed * cos(angle))
-                self.y -= (self.speed * sin(angle))
+        if(self.pos_x > food.pos_x and self.pos_y > food.pos_y):
+                self.pos_x -= (self.speed * cos(angle))
+                self.pos_y -= (self.speed * sin(angle))
         #Quadrant 4
-        if(self.x < food.x and self.y > food.y):
-                self.x += (self.speed * cos(angle))
-                self.y += (self.speed * sin(angle))
+        if(self.pos_x < food.pos_x and self.pos_y > food.pos_y):
+                self.pos_x += (self.speed * cos(angle))
+                self.pos_y += (self.speed * sin(angle))
 
     def findFood(self, foodlist):
         # initial setup
@@ -86,7 +85,7 @@ class Animal:
         return closestFood
             
     def getdistance(self, item):
-        distance = sqrt(((item.y - self.y)**2) + ((item.x - self.x)**2))
+        distance = sqrt(((item.pos_y - self.pos_y)**2) + ((item.pos_x - self.pos_x)**2))
         return distance
 
 
@@ -94,10 +93,9 @@ class Animal:
 class Llama(Animal):
     animations = {}
     sounds = {}
-    animations = Animation.loadAnimations("llama")
-    quanity = 10
     def __init__(self, pos):
         Animal.__init__(self, pos)
+        self.quanity = 10
         
     
     def update(self, fruitlist):
@@ -136,33 +134,33 @@ class Llama(Animal):
         if self.moving:
             # draw the correct walking/running sprite from the animation object
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             self.update_anim()
         else:  # standing still
             self.anim_frame = 0
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_back_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_front_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_left_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_right_stand'), (self.pos_x, self.pos_y))
         if self.state == 0:
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_back_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_front_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_left_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_right_dead'), (self.pos_x, self.pos_y))
         
         
         
@@ -171,7 +169,7 @@ class Tiger(Animal):
     sounds = {}
     def __init__(self, pos):
         Animal.__init__(self,pos)
-
+        self.quantity = 20
         
     def update(self, meatlist):
         # they are not moving unless a condition sets them to moving
@@ -209,30 +207,30 @@ class Tiger(Animal):
         if self.moving:
             # draw the correct walking/running sprite from the animation object
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.x, self.y))
+                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             self.update_anim()
         else:  # standing still
             self.anim_frame = 0
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_back_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_front_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_left_stand'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_stand'), (self.x, self.y))
+                screen.blit(self.getAnimation('_right_stand'), (self.pos_x, self.pos_y))
         if self.state == 0:
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_back_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_front_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_left_dead'), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_dead'), (self.x, self.y))
+                screen.blit(self.getAnimation('_right_dead'), (self.pos_x, self.pos_y))

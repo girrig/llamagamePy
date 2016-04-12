@@ -10,28 +10,27 @@ import random
 
 images = {}
 
-class Food:
+class Fruit:
     def __init__(self, pos):
-        self.pos = pos
-        self.x = self.pos[0]
-        self.y = self.pos[1]
+        self.pos_x = pos[0]
+        self.pos_y = pos[1]
         self.image = None
         self.quantity = 0
     
     def getImage(self):
         return self.image
 
-class Apple(Food):
+class Apple(Fruit):
     images = {}
     def __init__(self, pos):
-        Food.__init__(self, pos)
+        Fruit.__init__(self, pos)
         self.image = pygame.image.load('images/apple/24apple.png')
         self.quantity = 15
 
 
-class Pear(Food):
+class Pear(Fruit):
     images = {}
     def __init__(self, pos):
-        Food.__init__(self, pos)
+        Fruit.__init__(self, pos)
         self.image = pygame.image.load('images/pear/24pear.png')
         self.quantity = 15
