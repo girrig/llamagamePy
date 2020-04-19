@@ -1,14 +1,5 @@
-'''
-Created on Aug 30, 2014
-
-@author: Brandon
-'''
-
 import pygame
 from pygame.locals import *
-import sys
-import time
-
 
 anim_dict = {}
 
@@ -20,43 +11,43 @@ anim_dict = {}
 # BASICALLY build a string like the example
 
 
-# needs an input of 'type'  ex: llama, human, tiger, sheep
+# Needs an input of 'type'  ex: llama, human, tiger, sheep
 def loadAnimations(oType):
-    # setting up string to get animations
+    # Setting up string to get animations
     string = "images/"
-    # adding the type onto the string
+    # Adding the type onto the string
     string = string + oType + "/"
-    # adding on the random shit that this loop needs to work
+    # Adding on the random shit that this loop needs to work
     imgLoopString = string + "_%s_%s.png"
     animLoopString = string + "%s_%s.%s.png"
-    
+
     directionTypes = 'left front back'.split()
-    
+
     imgTypes = 'dead stand sit'.split()
     for direction in directionTypes:
         for img in imgTypes:
             if "left" in direction:  # for left/right images
-                # temp string for right
+                # Temp string for right
                 rightDirection = direction.replace("left", "right")
-                # left/right facing images
+                # Left/right facing images
                 temp = anim_dict["_%s_%s" % (direction, img)] = pygame.image.load(imgLoopString % (direction, img))
                 anim_dict["_%s_%s" % (rightDirection, img)] = pygame.transform.flip(temp, True, False)
-            else:  # front; back
+            else:  # Front; Back
                 anim_dict["_%s_%s" % (direction, img)] = pygame.image.load(imgLoopString % (direction, img))
-    
-    # NOTE: left animations must be loaded before right animations
-    animTypes = 'walk run sleep'.split() # llama_special, llama_idle
+
+    # NOTE: Left animations must be loaded before right animations
+    animTypes = 'walk run sleep'.split()  # llama_special, llama_idle
     for direction in directionTypes:
         for anim in animTypes:
             if "left" in direction:  # for left/right images
-                # temp string for right
+                # Temp string for right
                 rightDirection = direction.replace("left", "right")
-                # left/right facing images
-                for num in xrange(6):  # 0-5
+                # Left/right facing images
+                for num in range(6):  # 0-5
                     temp = anim_dict["%s_%s.%s" % (direction, anim, str(num).rjust(3, '0'))] = pygame.image.load(animLoopString % (direction, anim, str(num).rjust(3, '0')))
                     anim_dict["%s_%s.%s" % (rightDirection, anim, str(num).rjust(3, '0'))] = pygame.transform.flip(temp, True, False)
-            else:  # anything else
-                for num in xrange(6):  # 0-5
+            else:  # Anything else
+                for num in range(6):  # 0-5
                     anim_dict["%s_%s.%s" % (direction, anim, str(num).rjust(3, '0'))] = pygame.image.load(animLoopString % (direction, anim, str(num).rjust(3, '0')))
-    
+
     return anim_dict

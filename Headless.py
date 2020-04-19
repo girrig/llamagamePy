@@ -1,15 +1,4 @@
-'''
-Created on Apr 11, 2016
-
-@author: Brandon
-'''
-
-from Player import Player
-from Animal import Llama, Tiger
-from Fruit import Apple, Pear
-
-
-class World():
+class Headless():
     def __init__(self):
         # lists of all things on the screen
         self.fruitlist = []
@@ -18,8 +7,7 @@ class World():
 
         # Loop
         self.done = False
-    
-    
+
     #### MAIN LOOP FUCTIONS ####
     def handleEvents(self):
         pass
