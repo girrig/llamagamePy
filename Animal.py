@@ -1,7 +1,5 @@
 from math import atan, cos, sin, sqrt
 
-import pygame
-
 import Animation
 
 animations = {}
@@ -122,37 +120,36 @@ class Llama(Animal):
         elif self.state == 0:
             pass
 
+    # Draw the correct walking/running sprite from the animation object
     def paint(self, screen):
         if self.moving:
-            # Draw the correct walking/running sprite from the animation object
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             self.update_anim()
-        else:  # Standing still
-            self.anim_frame = 0
+        else:  # Idle
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_stand'), (self.pos_x, self.pos_y))
-        if self.state == 0:
+                screen.blit(self.getAnimation('idle_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+        if self.state == 0:  # Dead
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
 
 
 class Tiger(Animal):
@@ -195,34 +192,33 @@ class Tiger(Animal):
         elif self.state == 0:
             pass
 
+    # Draw the correct walking/running sprite from the animation object
     def paint(self, screen):
         if self.moving:
-            # Draw the correct walking/running sprite from the animation object
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             self.update_anim()
-        else:  # Standing still
-            self.anim_frame = 0
+        else:  # Idle
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_stand'), (self.pos_x, self.pos_y))
-        if self.state == 0:
+                screen.blit(self.getAnimation('idle_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+        if self.state == 0:  # Dead
             if ((self.direction > 315) or (self.direction < 45)):
-                screen.blit(self.getAnimation('_back_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction > 135) and (self.direction < 225)):
-                screen.blit(self.getAnimation('_front_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 225) and (self.direction <= 315)):
-                screen.blit(self.getAnimation('_left_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif ((self.direction >= 45) and (self.direction <= 135)):
-                screen.blit(self.getAnimation('_right_dead'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('dead_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))

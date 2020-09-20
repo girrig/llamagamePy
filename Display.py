@@ -9,7 +9,7 @@ from Player import Player
 
 
 class Display():
-    def __init__(self, width=1280, height=720):
+    def __init__(self, width=1920, height=1200):
         pygame.init()
         self.width = width
         self.height = height
@@ -162,8 +162,7 @@ class Display():
     def drawLists(self):
         # Fruit
         for each in self.fruitlist:
-            # fruit is 24x24 so half is 12
-            self.screen.blit(each.getImage(), (int(each.pos_x - 12), int(each.pos_y - 12)))
+            self.screen.blit(each.getImage(), (each.pos_x, each.pos_y))
 
         # Llama
         for each in self.llamalist:
@@ -195,4 +194,4 @@ class Display():
             self.draw()
 
             self.framecount += 1
-            self.fpsClock.tick(120)
+            self.fpsClock.tick(60)

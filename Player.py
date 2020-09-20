@@ -53,25 +53,25 @@ class Player:
         if self.moveRight:
             self.pos_x += self.speed
 
+    # Draw the correct walking/running sprite from the animation object
     def paint(self, screen):
-        if self.moveUp or self.moveDown or self.moveLeft or self.moveRight:  # moving
-            # Draw the correct walking/running sprite from the animation object
+        if self.moveUp or self.moveDown or self.moveLeft or self.moveRight:
             if self.direction == 'up':
-                screen.blit(self.getAnimation('back_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == 'down':
-                screen.blit(self.getAnimation('front_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == 'left':
-                screen.blit(self.getAnimation('left_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == 'right':
-                screen.blit(self.getAnimation('right_walk.00' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('walk_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             self.update_anim()
-        else:  # Standing still
-            self.anim_frame = 0
+        else:  # Idle
             if self.direction == 'up':
-                screen.blit(self.getAnimation('_back_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_up_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == 'down':
-                screen.blit(self.getAnimation('_front_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_down_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == "left":
-                screen.blit(self.getAnimation('_left_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_left_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
             elif self.direction == "right":
-                screen.blit(self.getAnimation('_right_stand'), (self.pos_x, self.pos_y))
+                screen.blit(self.getAnimation('idle_right_0' + str(self.anim_frame)), (self.pos_x, self.pos_y))
+            self.update_anim()
